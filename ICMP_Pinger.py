@@ -89,14 +89,14 @@ def sendOnePing(mySocket, destAddr, ID):
 def doOnePing(destAddr, timeout):
   icmp = getprotobyname("icmp")
 # Create Socket here
-  mySocket = socket(AF_INET, SOCK_DRAW, icmp)
+  mySocket = socket(AF_INET, SOCK_DRAM, icmp)
 
   myID = os.getpid() & 0xFFFF #Return the current process i
   sendOnePing(mySocket, destAddr, myID)
   delay = receiveOnePing(mySocket, myID, timeout, destAddr)
 
-mySocket.close()
-return delay
+  mySocket.close()
+  return delay
 
 
 def ping(host, timeout=1):
@@ -104,20 +104,12 @@ def ping(host, timeout=1):
   print("Pinging " + dest + " using Python:")
   print("")
 
-  loop = 0
-# Send ping requests to a server separated by approximately one second
-  while loop < 10:
-    delay = doOnePing(dest, timeout)
-    print(delay)
-    time.sleep(1) #sleep one second
-    loop += 1 #for loop-limit
+ #Send ping requests to a server separated by approximately one second
+    while 1 :
+        delay = doOnePing(dest, timeout)
+        print (delay)
+        time.sleep(1)# one second
     return delay
 
-#Picked IP of different continent from:
-#https://www.dotcom-monitor.com/blog/technical-tools/network-location-ip-addresses/
-print("Ping to Washington DC")
-ping("23.81.0.59")#Washington DC
-
-print('-----------------------')
-print("Ping to Australia")
-ping("223.252.19.130") # Brisbane, Australia
+if __name__ == '__main__':
+ping("127.0.0.1")
