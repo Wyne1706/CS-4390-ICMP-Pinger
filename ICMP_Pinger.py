@@ -17,7 +17,7 @@ def checksum(str_):
   csum = 0
   countTo = (len(str_) // 2) * 2
   
-   while count < countTo:
+  for count in range(0, countTo, 2):
      thisVal = str_[count + 1] * 256 + str_[count]
      csum = csum + thisVal
      csum = csum & 0xffffffff
@@ -54,6 +54,14 @@ def receiveOnePing(mySocket, ID, timeout, destAddr):
       bytesInDouble = struct.calcsize("d")
       timeSent = struct.unpack("d", recPacket[28:28 + bytesInDouble])[0]
       return timeReceived - timeSent
+      
+      # Calculate the round-trip time and TTL
+            rtt = (timeReceived - timeSent) * 1000
+            ttl = struct.unpack("B", recPacket[8:9])[0]
+
+            # Return a string with the ping response details
+            return f"Reply from {addr[0]}: bytes=32 time={rtt:.2f}ms TTL={ttl}"
+
 
     timeLeft = timeLeft - howLongInSelect
 
@@ -74,10 +82,10 @@ def sendOnePing(mySocket, destAddr, ID):
 
 # Get the right checksum, and put in the header
   if sys.platform == 'darwin':
-     myChecksum = htons(myChecksum) & 0xffff
+     myChecksum = socket.htons(myChecksum) & 0xffff
 # Convert 16-bit integers from host to network byte order.
   else:
-     myChecksum = htons(myChecksum)
+     myChecksum = socket.htons(myChecksum)
 
   header = struct.pack("bbHHh", ICMP_ECHO_REQUEST, 0, myChecksum, ID, 1)
   packet = header + data
